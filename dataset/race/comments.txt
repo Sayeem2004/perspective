@@ -1,1 +1,4 @@
 - Couldn't due random selection due to file size, instead just chose from top.
+- Some of the comments have unicode characters, decided to keep it because that's how the AI will monitor them
+- A lot of the comments have @<vulger words>, decided to keep
+- 
