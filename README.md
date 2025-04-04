@@ -1,7 +1,14 @@
-# perspective
+# Perspective API Analysis
 
+## References
 
+- Twitter AAE Data Set: https://slanglab.cs.umass.edu/TwitterAAE/
+- Twitter AEE Paper: https://aclanthology.org/D16-1120.pdf
 
-Twitter AAE Data Set: https://slanglab.cs.umass.edu/TwitterAAE/
+## Avenues For Analysis
 
-Twitter AEE Paper: https://aclanthology.org/D16-1120.pdf
+- [ ] Toxicity analysis (100 labeled, 1000 unlabeled) on dataset equally split among demographics.
+- [ ] Other category analysis on dataset equally split among demographics.
+- [ ] Context switching (adding spanish/mandarin words) to trick the API.
+- [ ] Community niche language like gaming (more desensitized), music (explicit lyrics), novels (made up words/names)
+- [ ] Message alterations: splitting up sentences/character substitution.
