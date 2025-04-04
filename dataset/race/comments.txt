@@ -1,5 +1,6 @@
 - Couldn't due random selection due to file size, instead just chose from top with a bit of probability of skipping.
-- Some of the comments have unicode characters, decided to keep it because that's how the AI will monitor them
-- A lot of the comments have @<vulgar words>, decided to keep because it is a method of bypassing the AI
-- Some of the Hispanic tweets had spanish we couldn't filter out, will test more in adversarial section
+- Some of the comments have unicode characters, decided to keep it because that's how the AI will monitor them.
+- A lot of the comments have @<vulgar words>, decided to keep because it is a method of bypassing the AI.
+- Some of the Hispanic tweets had spanish we couldn't filter out, will test more in adversarial section.
 - Not labeling OTHER-100 because mostly in different languages, will still try the unlabeled one though.
+- Twitter data kind of difficult to find toxic comments because it is already filtered.

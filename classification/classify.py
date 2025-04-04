@@ -30,16 +30,19 @@ if __name__ == "__main__":
     with open(args.file, "r") as file:
         with open(output_file, "w") as output:
             lines = file.readlines()
-            for line in lines:
+            for i, line in enumerate(lines):
                 # Creating Request
+                print(f"Analyzing: {i + 1}/{len(lines)}")
                 comment = line.split("\t")[0]
                 analyze_request = {
                     'comment': {'text': comment.strip()},
-                    'requestedAttributes': {args.category: {}}
+                    'requestedAttributes': {args.category: {}},
+                    'languages': ['en', 'es']
                 }
 
                 # Sending Request + Results
                 response = client.comments().analyze(body=analyze_request).execute()
                 score = response["attributeScores"][args.category]["summaryScore"]["value"]
                 output.write(f"{comment.strip()},{score}\n")
+                output.flush()
                 time.sleep(1)
