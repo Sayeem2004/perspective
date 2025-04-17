@@ -27,8 +27,8 @@ if __name__ == "__main__":
     output_file = f"{filename}_{args.category}.csv"
 
     # Iterating through CSV file
-    with open(args.file, "r") as file:
-        with open(output_file, "w") as output:
+    with open(args.file, "r", encoding="utf-8") as file:
+        with open(output_file, "w", encoding="utf-8") as output:
             lines = file.readlines()
             for i, line in enumerate(lines):
                 # Creating Request
@@ -37,7 +37,7 @@ if __name__ == "__main__":
                 analyze_request = {
                     'comment': {'text': comment.strip()},
                     'requestedAttributes': {args.category: {}},
-                    'languages': ['en', 'es']
+                    'languages': ['en', 'es', 'zh']
                 }
 
                 # Sending Request + Results
