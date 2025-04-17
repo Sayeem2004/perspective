@@ -2,5 +2,6 @@
 - Some of the comments have unicode characters, decided to keep it because that's how the AI will monitor them.
 - A lot of the comments have @<vulgar words>, decided to keep because it is a method of bypassing the AI.
 - Some of the Hispanic tweets had spanish we couldn't filter out, will test more in adversarial section.
+    - General recommendation, is pretty easy to include spanish and english together as compared to just english. Might as well include it as a developer. Never use automatic translation, can cause errors if multiple languages.
 - Not labeling OTHER-100 because mostly in different languages, will still try the unlabeled one though.
-- Twitter data kind of difficult to find toxic comments because it is already filtered.
+- Twitter/Reddit data kind of difficult to find toxic comments because it is already filtered, but if the model can detect these toxicities that bypass the already put filters, then it can probably do the simplistic examples, we don't need to worry too much about it.

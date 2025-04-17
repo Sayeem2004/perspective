@@ -10,12 +10,12 @@ example:
 
 classify:
 	venv/bin/python3 -m classification.classify \
-		--file=dataset/race/95/unlabeled-AA-1100.csv
+		--file=adversarial/community/novel.csv
 
 compare:
 	venv/bin/python3 -m classification.compare \
-		--file_man=dataset/race/95/labeled-WHITE-100.csv \
-		--file_api=classification/race/95/labeled-WHITE-100_TOXICITY.csv \
+		--file_man=adversarial/community/novel_labeled.csv \
+		--file_api=adversarial/community/novel_TOXICITY.csv \
 
 aggregate:
 	venv/bin/python3 -m classification.aggregate \
