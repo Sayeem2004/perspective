@@ -23,7 +23,7 @@ if __name__ == "__main__":
             for i, (line_man, line_api) in enumerate(lines):
                 # Splitting Lines
                 print(f"Comparing: {i + 1}")
-                split_man = line_man.split("\t")
+                split_man = line_man.split(",")
                 split_api = line_api.split(",")
 
                 # Adding To Statistics
@@ -35,9 +35,9 @@ if __name__ == "__main__":
 
                 # Printing Differences
                 if 'T' in split_man[-1] and float(split_api[-1]) < args.threshold:
-                    print(f'Manual True, API False, {split_man[0]}')
+                    print(f'Manual True, API False, {line_man}')
                 if 'F' in split_man[-1] and float(split_api[-1]) >= args.threshold:
-                    print(f'Manual False, API True, {split_man[0]}')
+                    print(f'Manual False, API True, {line_man}')
 
     # Printing Results
     print(f'Manual Toxicity: {man_true}/{man_true+man_false}')
