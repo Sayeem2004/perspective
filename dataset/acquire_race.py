@@ -25,7 +25,7 @@ def collect_data(database, race_id, output_file, threshold):
                 OTHER_prob = line.split("\t")[6+OTHER]
                 WHITE_prob = line.split("\t")[6+WHITE]
                 data.append((comment, AA_prob, HISPANIC_prob, OTHER_prob, WHITE_prob))
-                if len(data) >= 1100:
+                if len(data) >= 10000:
                     searching = False
                     break
             line_counter += 1
@@ -43,7 +43,7 @@ def collect_data_all():
     inputs = []
     for threshold in [0.95]:
         for race_id, race_str in [(AA, 'AA'), (HISPANIC, 'HISPANIC'), (OTHER, 'OTHER'), (WHITE, 'WHITE')]:
-            inputs.append((database,race_id,f'./race/{int(threshold*100)}/unlabeled-{race_str}-1100.csv',threshold))
+            inputs.append((database,race_id,f'./race/{int(threshold*100)}/unlabeled-{race_str}-10000.csv',threshold))
             
     with multiprocessing.Pool(processes=8) as pool:
         pool.starmap(collect_data, inputs)
@@ -67,5 +67,5 @@ def subsample_all():
         pool.starmap(subsample, inputs)
     
 if __name__ == "__main__":
-    subsample_all()
+    collect_data_all()
     

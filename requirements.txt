@@ -1,2 +1,5 @@
 google-api-python-client
 python-dotenv
+pandas
+matplotlib
+numpy
