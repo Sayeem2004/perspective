@@ -10,7 +10,7 @@ example:
 
 classify:
 	venv/bin/python3 -m classification.classify \
-		--file=adversarial/community/novel.csv
+		--file=adversarial/structure/substitute-positive.csv
 
 compare:
 	venv/bin/python3 -m classification.compare \
