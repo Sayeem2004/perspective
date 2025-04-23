@@ -31,7 +31,7 @@ def get_perspective_probabilities(n):
     Get the perspective probabilities from the dataset.
     """
     perspective_probs = [0,0,0]
-    
+
     for i, gender in enumerate(genders):
         count=0
         prefix = 'labeled' if n == 100 else 'unlabeled'
@@ -51,12 +51,16 @@ if __name__ == '__main__':
     print('Human probabilities: ', get_human_probabilities())
     print('Perspective probabilities 1000: ', get_perspective_probabilities(1000))
     print('Perspective probabilities 100: ', get_perspective_probabilities(100))
-    print('Bias 1000: ', np.array(get_perspective_probabilities(1000)) / np.array(get_human_probabilities()))
-    print('Bias 100: ', np.array(get_perspective_probabilities(100)) / np.array(get_human_probabilities()))
-    
+    # print('Bias 1000: ', np.array(get_perspective_probabilities(1000)) / np.array(get_human_probabilities()))
+    # print('Bias 100: ', np.array(get_perspective_probabilities(100)) / np.array(get_human_probabilities()))
+
+    # manually adding 1 to neutral to prevent 0/0 errors.
+    bias_1000 = np.ones(3)
+    bias_100 = np.ones(3)
+
     # create a bar graph of bias
-    bias_1000 = np.array(get_perspective_probabilities(1000)) / np.array(get_human_probabilities())
-    bias_100 = np.array(get_perspective_probabilities(100)) / np.array(get_human_probabilities())
+    bias_1000[:2] = np.array(get_perspective_probabilities(1000))[:2] / np.array(get_human_probabilities())[:2]
+    bias_100[:2] = np.array(get_perspective_probabilities(100))[:2] / np.array(get_human_probabilities())[:2]
     # bias_100[3] += 0.05
 
     sub_categories = ['100', '1000']
@@ -66,7 +70,7 @@ if __name__ == '__main__':
         bias_100,
         bias_1000
     ]
-    
+
     values = np.array(values)
     values = values.T
 
@@ -82,11 +86,16 @@ if __name__ == '__main__':
         ax.bar(x + i * bar_width, values[:, i], width=bar_width, label=sub_categories[i], color=colors[i])
         # Add value labels on top of bars
         for j in range(len(genders)):
-            ax.text(x[j] + i * bar_width, values[j, i] + 0.01, f'{values[j, i]:.2f}', 
+            ax.text(x[j] + i * bar_width, values[j, i] + 0.01, f'{values[j, i]:.2f}',
                     ha='center', va='bottom', fontsize=8)
 
+    # Talk about neutral being no toxic comments.
+    star_x = x[2] + bar_width / 2
+    star_y = values[2, 1] + 0.05
+    ax.text(star_x, star_y, '★', fontsize=40, color='red', ha='center')
+
     ax.axhline(y=1, color='k', linestyle='--', linewidth=2)
-    ax.set_title('Gender Bias', fontsize=24)
+    ax.set_title('Gendered Topic Bias', fontsize=24)
     ax.set_ylabel('Toxicity Ratio', fontsize=24)
     # ax.set_xlabel('Race Type', fontsize=24)
     ax.set_xticks(x + bar_width/2)
@@ -97,9 +106,8 @@ if __name__ == '__main__':
     # Grid and layout
     ax.grid(axis='y', linestyle='-', linewidth=0.8, alpha=0.9)
     plt.tight_layout()
-    
+
     plt.savefig('./gender_topic_graph.png', dpi=300)
     # plt.show()
-    
+
     plt.close()
-    
