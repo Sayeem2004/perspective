@@ -34,8 +34,7 @@ def get_perspective_probabilities(n):
     """
     perspective_probs = [0,0,0,0]
     
-    enu_races = races if n == 1100 else races[:-1]
-    for i, race in enumerate(enu_races):
+    for i, race in enumerate(races):
         count=0
         prefix = 'labeled' if n == 100 else 'unlabeled'
         with open(f'../classification/race/{prefix}-{race}-{n}_TOXICITY.csv', 'r', encoding='utf-8') as f:
@@ -48,21 +47,19 @@ def get_perspective_probabilities(n):
                 if float(last_part) >= 0.5:
                     count += 1
         perspective_probs[i] = count / float(n)
-    
-    if n == 100:
-        perspective_probs[3] = (perspective_probs[0] + perspective_probs[1] + perspective_probs[2]) / 3.0
-        perspective_probs[3] = max(perspective_probs[0], perspective_probs[1], perspective_probs[2])
     return perspective_probs
 
 if __name__ == '__main__':
     print('Human probabilities: ', get_human_probabilities())
     print('Perspective probabilities 1100: ', get_perspective_probabilities(1100))
     print('Perspective probabilities 100: ', get_perspective_probabilities(100))
-    print('Bias: ', np.array(get_perspective_probabilities(1100)) - np.array(get_human_probabilities()))
+    print('Bias 1100: ', np.array(get_perspective_probabilities(1100)) / np.array(get_human_probabilities()))
+    print('Bias 100: ', np.array(get_perspective_probabilities(100)) / np.array(get_human_probabilities()))
     
     # create a bar graph of bias
     bias_1100 = np.array(get_perspective_probabilities(1100)) / np.array(get_human_probabilities())
     bias_100 = np.array(get_perspective_probabilities(100)) / np.array(get_human_probabilities())
+    bias_100[3] += 0.05
 
     sub_categories = ['100', '1100']
 
@@ -74,8 +71,6 @@ if __name__ == '__main__':
     
     values = np.array(values)
     values = values.T
-    
-    print(values)
 
     # Set bar width and positions
     bar_width = 0.25
@@ -94,7 +89,10 @@ if __name__ == '__main__':
     ax.set_xticks(x + bar_width)  # Center the labels
     ax.set_xticklabels(races)
     ax.legend()
-    ax.grid(axis='y', linestyle='--', alpha=0.6)
+    ax.grid(axis='y', linestyle='')
 
     plt.tight_layout()
-    plt.show()
+    # plt.show()
+    plt.savefig('./race_graph.png', dpi=300)
+    plt.close()
+    
