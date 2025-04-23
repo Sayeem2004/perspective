@@ -4,33 +4,54 @@ import seaborn as sns
 import numpy as np
 
 # Read the CSV file
-df = pd.read_csv('classification/niche/music_TOXICITY.csv', header=None)
+df = pd.read_csv('../adversarial/community/gaming_TOXICITY.csv', header=None)
 
-# Assign column names based on the structure you described
+# Assign column names
 df.columns = ['lyrics', 'label', 'score']
 
+# Sanitize label and score values
+df['label'] = df['label'].astype(str).str.strip().str.upper()   # Clean label
+df['score'] = pd.to_numeric(df['score'], errors='coerce')       # Ensure score is float
+
 print("Starting scatterplot")
+
 # Create classification categories
-df['classification'] = 'unknown'
-df.loc[(df['label'] == 'T') & (df['score'] >= 0.50), 'classification'] = 'True Positive'
-df.loc[(df['label'] == 'T') & (df['score'] < 0.50), 'classification'] = 'False Positive'
-df.loc[(df['label'] == 'F') & (df['score'] < 0.50), 'classification'] = 'True Negative'
-df.loc[(df['label'] == 'F') & (df['score'] >= 0.50), 'classification'] = 'False Negative'
+def classify(label, score):
+    if label == 'T' and score >= 0.50:
+        return 'True Positive'
+    elif label == 'T' and score < 0.50:
+        return 'False Positive'
+    elif label == 'F' and score < 0.50:
+        return 'True Negative'
+    elif label == 'F' and score >= 0.50:
+        return 'False Negative'
+    else:
+        return 'unknown'
+
+df['classification'] = df.apply(lambda row: classify(row['label'], row['score']), axis=1)
+
+# Debugging block to find 'unknown' results
+unknown_rows = df[df['classification'] == 'unknown']
+print("Rows with 'unknown' classification:")
+print(unknown_rows)
+print(f"Total 'unknown' rows: {len(unknown_rows)}")
+print("Unique values in classification column:")
+print(df['classification'].unique())
 
 # Set up the figure with two subplots
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6))
 fig.suptitle('Toxicity Score Analysis', fontsize=16)
 
-# 1. Strip plot (jittered points by category)
 # Define color palette
 palette = {
     'True Positive': 'green',
     'True Negative': 'red',
     'False Positive': 'blue',
-    'False Negative': 'purple'
+    'False Negative': 'purple',
+    'unknown': 'gray'
 }
 
-# Create a strip plot
+# 1. Strip plot
 sns.stripplot(
     x='classification',
     y='score',
