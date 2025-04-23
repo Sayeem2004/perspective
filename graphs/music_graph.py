@@ -1,84 +1,129 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-import seaborn as sns
 import numpy as np
+import time
 
-# Read the CSV file
-df = pd.read_csv('../adversarial/community/gaming_TOXICITY.csv', header=None)
+start_time = time.time()
 
-# Assign column names
+print("Starting data loading...")
+df = pd.read_csv('classification/community/novel_TOXICITY.csv', header=None)
+print(f"CSV loaded in {time.time() - start_time:.2f} seconds")
+print(f"Data shape: {df.shape}")
+
 df.columns = ['lyrics', 'label', 'score']
 
-# Sanitize label and score values
-df['label'] = df['label'].astype(str).str.strip().str.upper()   # Clean label
-df['score'] = pd.to_numeric(df['score'], errors='coerce')       # Ensure score is float
+print("Cleaning data...")
+df['label'] = df['label'].astype(str).str.strip().str.upper()
+df['score'] = pd.to_numeric(df['score'], errors='coerce')
 
-print("Starting scatterplot")
+df['text_length'] = df['lyrics'].str.len()
 
-# Create classification categories
+print("Creating classifications...")
 def classify(label, score):
     if label == 'T' and score >= 0.50:
         return 'True Positive'
-    elif label == 'T' and score < 0.50:
+    elif label == 'F' and score >= 0.50:
         return 'False Positive'
+    elif label == 'T' and score < 0.50:
+        return 'False Negative'
     elif label == 'F' and score < 0.50:
         return 'True Negative'
-    elif label == 'F' and score >= 0.50:
-        return 'False Negative'
     else:
-        return 'unknown'
+        return 'Unknown'
 
 df['classification'] = df.apply(lambda row: classify(row['label'], row['score']), axis=1)
 
-# Debugging block to find 'unknown' results
-unknown_rows = df[df['classification'] == 'unknown']
-print("Rows with 'unknown' classification:")
-print(unknown_rows)
-print(f"Total 'unknown' rows: {len(unknown_rows)}")
-print("Unique values in classification column:")
-print(df['classification'].unique())
-
-# Set up the figure with two subplots
-fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6))
-fig.suptitle('Toxicity Score Analysis', fontsize=16)
-
-# Define color palette
-palette = {
+colors = {
     'True Positive': 'green',
-    'True Negative': 'red',
-    'False Positive': 'blue',
-    'False Negative': 'purple',
-    'unknown': 'gray'
+    'False Positive': 'red',
+    'False Negative': 'orange',
+    'True Negative': 'blue',
+    'Unknown': 'gray'
 }
 
-# 1. Strip plot
-sns.stripplot(
-    x='classification',
-    y='score',
-    data=df,
-    palette=palette,
-    jitter=True,
-    alpha=0.7,
-    ax=ax1
-)
+print("Creating plot...")
+fig, ax = plt.subplots(figsize=(14, 10))
 
-ax1.set_xlabel('Classification')
-ax1.set_ylabel('Toxicity Score')
-ax1.set_title('Toxicity Scores by Classification Category')
-ax1.grid(True, linestyle='--', alpha=0.7)
-ax1.set_ylim(0, 1)
+plt.axhline(y=0.5, color='black', linestyle='-', linewidth=2)
+plt.axvline(x=0, color='black', linestyle='-', linewidth=2)
 
-print("Starting histogram")
-# 2. Histogram Plot
-bins = np.linspace(0, 1, 11)
-ax2.hist(df['score'], bins=bins, edgecolor='black')
-ax2.set_xlabel('Toxicity Score Range')
-ax2.set_ylabel('Number of Data Points')
-ax2.set_title('Distribution of Toxicity Scores')
-ax2.grid(True, linestyle='--', alpha=0.7)
+toxic_lengths = df[df['label'] == 'T']['text_length']
+nontoxic_lengths = df[df['label'] == 'F']['text_length']
 
-# Adjust layout and display
+toxic_quantiles = [np.percentile(toxic_lengths, q) for q in [0, 25, 50, 75, 100]]
+nontoxic_quantiles = [np.percentile(nontoxic_lengths, q) for q in [0, 25, 50, 75, 100]]
+
+toxic_quantiles = [int(q) for q in toxic_quantiles]
+nontoxic_quantiles = [int(q) for q in nontoxic_quantiles]
+
+# Create normalized positions based on text length percentiles within each class
+# For toxic content (T), use position from -1 to 0 (starting from largest to smallest)
+# For non-toxic content (F), use position from 0 to 1 (starting from smallest to largest)
+
+def map_to_position(row):
+    if row['label'] == 'T':
+        min_val = min(toxic_lengths)
+        max_val = max(toxic_lengths)
+        return (row['text_length'] - min_val) / (max_val - min_val)
+    else:
+        min_val = min(nontoxic_lengths)
+        max_val = max(nontoxic_lengths)
+        return -1 * (row['text_length'] - min_val) / (max_val - min_val)
+
+df['position'] = df.apply(map_to_position, axis=1)
+
+for cat, color in colors.items():
+    cat_data = df[df['classification'] == cat]
+    if not cat_data.empty:
+        plt.scatter(
+            cat_data['position'], 
+            cat_data['score'],
+            color=color,
+            alpha=0.7,
+            s=80,
+            label=cat
+        )
+
+plt.ylim(-0.05, 1.05)
+plt.xlim(-1.05, 1.05)
+
+plt.xlabel("TEXT LENGTH (CHARACTERS)", fontsize=14, fontweight='bold')
+plt.ylabel("MODEL TOXICITY SCORE", fontsize=14, fontweight='bold')
+
+plt.text(-0.5, 1.02, "C - FALSE POSITIVES", fontsize=14, fontweight='bold', ha='center')
+plt.text(0.5, 1.02, "A - TRUE POSITIVES", fontsize=14, fontweight='bold', ha='center')
+plt.text(-0.5, -0.02, "D - TRUE NEGATIVES", fontsize=14, fontweight='bold', ha='center')
+plt.text(0.5, -0.02, "B - FALSE NEGATIVES", fontsize=14, fontweight='bold', ha='center')
+plt.title("NOVEL CONTENT TOXICITY DETECTION PERFORMANCE", fontsize=18, fontweight='bold')
+
+x_ticks = [-1, -0.5, 0, 0.5, 1]
+x_labels = [
+    f"{nontoxic_quantiles[4]} chars (Non-Toxic)", 
+    f"{nontoxic_quantiles[2]} chars (Non-Toxic)", 
+    f"{int((nontoxic_quantiles[0] + toxic_quantiles[0])/2)} chars", 
+    f"{toxic_quantiles[2]} chars (Toxic)", 
+    f"{toxic_quantiles[4]} chars (Toxic)"
+]
+plt.xticks(x_ticks, x_labels, fontsize=10)
+y_ticks = [0, 0.25, 0.5, 0.75, 1.0]
+plt.yticks(y_ticks, ['0.0', '0.25', '0.5', '0.75', '1.0'])
+
+plt.legend(title="Classification", loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=4)
+
+for spine in ax.spines.values():
+    spine.set_linewidth(2)
+
+ax.grid(True, linestyle='--', alpha=0.3)
+
+print("Finalizing plot...")
 plt.tight_layout()
-plt.subplots_adjust(top=0.9)
-plt.savefig('toxicity_visualization.png', dpi=300, bbox_inches='tight')
-plt.show()
+print(f"Attempting to save plot...")
+plt.savefig('graphs/novel_graph.png', dpi=300, bbox_inches='tight')
+print(f"Plot saved successfully")
+
+try:
+    plt.show()
+except Exception as e:
+    print(f"Could not display plot interactively: {e}")
+
+print(f"Total execution time: {time.time() - start_time:.2f} seconds")
