@@ -62,7 +62,7 @@ def get_perspective_probabilities():
                 if float(last_part) >= 0.5:
                     count += 1
         perspective_probs[i] = count / float(50)
-        
+
     for i, topic in enumerate(communities_perspective):
         count=0
         with open(f'../classification/community/{topic}', 'r', encoding='utf-8') as f:
@@ -81,28 +81,28 @@ if __name__ == '__main__':
     human_probs = get_human_probabilities()
     human_probs[1] = 1
     perspective_probs = get_perspective_probabilities()
-    
+
     human_probs = human_probs[10:]
     perspective_probs = perspective_probs[10:]
-    
+
     # print('Human probabilities: ', get_human_probabilities())
     # print('Perspective probabilities 100: ', get_perspective_probabilities())
     # print('Bias: ', np.array(get_perspective_probabilities()) / np.array(get_human_probabilities()))
-    
+
     # create a bar graph of bias
     # bias_1000 = np.array(get_perspective_probabilities(1000)) / np.array(get_human_probabilities())
     # bias_100 = np.array(get_perspective_probabilities(100)) / np.array(get_human_probabilities())
     # bias_100[3] += 0.05
-    
+
     bias = np.array(perspective_probs) / np.array(human_probs)
 
-    sub_categories = ['50']
+    sub_categories = ['100']
 
     # Data for each sub-category (same order as sub_categories)
     values = [
         bias,
     ]
-    
+
     values = np.array(values)
     values = values.T
 
@@ -118,7 +118,7 @@ if __name__ == '__main__':
         ax.bar(x + i * bar_width, values[:, i], width=bar_width, label=sub_categories[i], color=colors[i])
         # Add value labels on top of bars
         for j in range(4):
-            ax.text(x[j] + i * bar_width, values[j, i] + 0.01, f'{values[j, i]:.2f}', 
+            ax.text(x[j] + i * bar_width, values[j, i] + 0.01, f'{values[j, i]:.2f}',
                     ha='center', va='bottom', fontsize=8)
 
     ax.axhline(y=1, color='k', linestyle='--', linewidth=2)
@@ -134,9 +134,8 @@ if __name__ == '__main__':
     # Grid and layout
     ax.grid(axis='y', linestyle='-', linewidth=0.8, alpha=0.9)
     plt.tight_layout()
-    
+
     plt.savefig('./topic_graph.png', dpi=300)
     # plt.show()
-    
+
     plt.close()
-    
