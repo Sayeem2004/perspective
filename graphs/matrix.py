@@ -48,7 +48,7 @@ for i in range(2):
 
 # Create a custom colormap with better contrast
 # Using a custom colormap for better visibility
-custom_cmap = plt.cm.get_cmap('Oranges', 256)  # Change to a more visible colormap
+custom_cmap = plt.cm.get_cmap('Blues', 256)  # Change to a more visible colormap
 
 # Create heatmap (Punnett square)
 im = ax.imshow(punnett_data, cmap=custom_cmap)
@@ -61,22 +61,22 @@ for i in range(2):
         percentage = (count / len(df)) * 100
         text = f"{label}\n{int(count)} ({percentage:.1f}%)"
         ax.text(j, i, text, ha='center', va='center', 
-                fontsize=12, color='black', fontweight='bold')
+                fontsize=24, color='black', fontweight='bold')
 
 # Add axis labels
 ax.set_xticks([])
 ax.set_yticks([])
-ax.set_title('Novel Toxicity Classification Confusion Matrix', fontsize=16)
+ax.set_title('Novel Toxicity Classification Confusion Matrix', fontsize=28)
 
 # Add legend for classifications
 x_label = "Model Score < 0.50 | Model Score ≥ 0.50"
 y_label = "Actual: Not Toxic (F) | Actual: Toxic (T)"
-plt.xlabel(x_label, fontsize=12)
-plt.ylabel(y_label, fontsize=12, rotation=90, labelpad=15)
+plt.xlabel(x_label, fontsize=26)
+plt.ylabel(y_label, fontsize=26, rotation=90, labelpad=15)
 
 # Add colorbar
 cbar = plt.colorbar(im)
-cbar.set_label('Number of Instances', rotation=270, labelpad=15)
+cbar.set_label('Number of Instances', fontsize=22, rotation=270, labelpad=15)
 
 plt.tight_layout()
 plt.savefig('graphs/novel_matrix.png', dpi=300, bbox_inches='tight')
