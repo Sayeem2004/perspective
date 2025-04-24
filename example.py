@@ -19,8 +19,8 @@ if __name__ == "__main__":
 
     # Creating Request
     analyze_request = {
-        'comment': { 'text': 'I fucking love you :)' },
-        'requestedAttributes': {'TOXICITY': {}}
+        'comment': { 'text': 'It was actually easy mid, even with that slardar 24/7 supporting your ass' },
+        'requestedAttributes': {'TOXICITY': {}, 'SEVERE_TOXICITY': {}},
     }
 
     # Sending Request + Results

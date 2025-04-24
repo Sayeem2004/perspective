@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # Load dataset
-df = pd.read_csv('../../perspective/classification/context/mandarin_TOXICITY.csv', header=None)
+df = pd.read_csv('../classification/context/mandarin_TOXICITY.csv', header=None)
 df.columns = ['text', 'label', 'score']
 df['label'] = df['label'].astype(str).str.strip().str.upper()
 df['score'] = pd.to_numeric(df['score'], errors='coerce')
@@ -42,7 +42,7 @@ for i, lang in enumerate(languages):
     lang_df = df[df['language_type'] == lang]
     for cls, group in lang_df.groupby('quad_class'):
         ax.scatter(group['length'], group['score'], c=color_map[cls], label=cls, alpha=0.8)
-    
+
     # Axis and lines
     median_len = lang_df['length'].median()
     ax.axhline(0.5, color='black', linewidth=1.5)

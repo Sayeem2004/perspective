@@ -1,9 +1,8 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-import seaborn as sns
 import numpy as np
 
-df = pd.read_csv('../../perspective/classification/context/mandarin_TOXICITY.csv', header=None)
+df = pd.read_csv('../classification/context/mandarin_TOXICITY.csv', header=None)
 df.columns = ['sentence', 'label', 'score']
 
 df['classification'] = 'unknown'
@@ -38,7 +37,7 @@ for i, lang in enumerate(languages):
         edgecolor='black',
         alpha=0.8
     )
-    ax.set_title(f'{lang} – Score Distribution')
+    ax.set_title(f'{lang} – Score Distribution', fontsize=16)
     ax.set_xlabel('Toxicity Score')
     ax.set_ylabel('Count')
     ax.set_ylim(0, max_count + 1)  # ensure consistent y-axis

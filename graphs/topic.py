@@ -119,7 +119,7 @@ if __name__ == '__main__':
         # Add value labels on top of bars
         for j in range(4):
             ax.text(x[j] + i * bar_width, values[j, i] + 0.01, f'{values[j, i]:.2f}',
-                    ha='center', va='bottom', fontsize=8)
+                    ha='center', va='bottom', fontsize=16)
 
     ax.axhline(y=1, color='k', linestyle='--', linewidth=2)
     ax.set_title('Community Bias', fontsize=24)
