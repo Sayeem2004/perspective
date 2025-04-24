@@ -23,7 +23,7 @@ def get_human_probabilities():
                 if line.endswith('T\n'):
                     count += 1
         probs[i] = count / 100.0
-        
+
     probs[3] = (probs[0] + probs[1] + probs[2]) / 3.0
     probs[3] = max(probs[0], probs[1], probs[2])
     return probs
@@ -33,7 +33,7 @@ def get_perspective_probabilities(n):
     Get the perspective probabilities from the dataset.
     """
     perspective_probs = [0,0,0,0]
-    
+
     for i, race in enumerate(races):
         count=0
         prefix = 'labeled' if n == 100 else 'unlabeled'
@@ -55,7 +55,7 @@ if __name__ == '__main__':
     print('Perspective probabilities 100: ', get_perspective_probabilities(100))
     print('Bias 1100: ', np.array(get_perspective_probabilities(1100)) / np.array(get_human_probabilities()))
     print('Bias 100: ', np.array(get_perspective_probabilities(100)) / np.array(get_human_probabilities()))
-    
+
     # create a bar graph of bias
     bias_1100 = np.array(get_perspective_probabilities(1100)) / np.array(get_human_probabilities())
     bias_100 = np.array(get_perspective_probabilities(100)) / np.array(get_human_probabilities())
@@ -68,7 +68,7 @@ if __name__ == '__main__':
         bias_100,
         bias_1100
     ]
-    
+
     values = np.array(values)
     values = values.T
 
@@ -84,8 +84,8 @@ if __name__ == '__main__':
         ax.bar(x + i * bar_width, values[:, i], width=bar_width, label=sub_categories[i], color=colors[i])
         # Add value labels on top of bars
         for j in range(len(races)):
-            ax.text(x[j] + i * bar_width, values[j, i] + 0.01, f'{values[j, i]:.2f}', 
-                    ha='center', va='bottom', fontsize=8)
+            ax.text(x[j] + i * bar_width, values[j, i] + 0.01, f'{values[j, i]:.2f}',
+                    ha='center', va='bottom', fontsize=16)
 
     ax.axhline(y=1, color='k', linestyle='--', linewidth=2)
     ax.set_title('Race Bias', fontsize=24)
@@ -98,9 +98,8 @@ if __name__ == '__main__':
     # Grid and layout
     ax.grid(axis='y', linestyle='-', linewidth=0.8, alpha=0.9)
     plt.tight_layout()
-    
+
     plt.savefig('./race_graph.png', dpi=300)
     # plt.show()
-    
+
     plt.close()
-    
